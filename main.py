@@ -64,15 +64,15 @@ ORDER BY name ASC;
 
 df_4_oldest = pd.read_sql("""
 SELECT name, age, breed
-FROM (
-    SELECT name, age, breed
+FROM dogs
+WHERE name IN (
+    SELECT name
     FROM dogs
     ORDER BY age DESC
     LIMIT 4
-) AS sub
+)
 ORDER BY breed ASC;
 """, conn2)
-
 conn2.close()
 
 
