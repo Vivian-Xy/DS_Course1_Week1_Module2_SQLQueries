@@ -2,148 +2,115 @@ import sqlite3
 import pandas as pd
 
 
-# PART 1: PLANETS DATABASE
+# =========================
+# PLANETS DB
+# =========================
+
+conn1 = sqlite3.connect("planets.db")
+
+df_no_moons = pd.read_sql("""
+    SELECT * FROM planets
+    WHERE number_of_moons = 0;
+""", conn1)
 
 
-def step1_no_moons():
-    conn = sqlite3.connect("planets.db")
-    df = pd.read_sql("""
-        SELECT * FROM planets
-        WHERE number_of_moons = 0;
-    """, conn)
-    conn.close()
-    return df
+df_name_seven = pd.read_sql("""
+    SELECT name, mass FROM planets
+    WHERE LENGTH(name) = 7;
+""", conn1)
 
 
-def step2_name_seven():
-    conn = sqlite3.connect("planets.db")
-    df = pd.read_sql("""
-        SELECT name, mass
-        FROM planets
-        WHERE LENGTH(name) = 7;
-    """, conn)
-    conn.close()
-    return df
+df_mass = pd.read_sql("""
+    SELECT name, mass FROM planets
+    WHERE mass <= 1.00;
+""", conn1)
 
 
-def step3_mass():
-    conn = sqlite3.connect("planets.db")
-    df = pd.read_sql("""
-        SELECT name, mass
-        FROM planets
-        WHERE mass <= 1.00;
-    """, conn)
-    conn.close()
-    return df
+df_mass_moon = pd.read_sql("""
+    SELECT * FROM planets
+    WHERE number_of_moons >= 1
+      AND mass < 1.00;
+""", conn1)
 
 
-def step4_mass_moon():
-    conn = sqlite3.connect("planets.db")
-    df = pd.read_sql("""
-        SELECT *
-        FROM planets
-        WHERE number_of_moons >= 1
-          AND mass < 1.00;
-    """, conn)
-    conn.close()
-    return df
+df_blue = pd.read_sql("""
+    SELECT name, color FROM planets
+    WHERE color LIKE '%blue%';
+""", conn1)
 
 
-def step5_blue():
-    conn = sqlite3.connect("planets.db")
-    df = pd.read_sql("""
-        SELECT name, color
-        FROM planets
-        WHERE color LIKE '%blue%';
-    """, conn)
-    conn.close()
-    return df
+conn1.close()
 
 
-# PART 3: DOGS DATABASE
+# =========================
+# DOGS DB
+# =========================
+
+conn2 = sqlite3.connect("dogs.db")
 
 
-def step6_hungry():
-    conn = sqlite3.connect("dogs.db")
-    df = pd.read_sql("""
+df_hungry = pd.read_sql("""
+    SELECT name, age, breed
+    FROM dogs
+    WHERE hungry = 1
+    ORDER BY age ASC;
+""", conn2)
+
+
+df_hungry_ages = pd.read_sql("""
+    SELECT name, age, hungry
+    FROM dogs
+    WHERE hungry = 1
+      AND age BETWEEN 2 AND 7
+    ORDER BY name ASC;
+""", conn2)
+
+
+df_4_oldest = pd.read_sql("""
+    SELECT name, age, breed
+    FROM (
         SELECT name, age, breed
         FROM dogs
-        WHERE hungry = 1
-        ORDER BY age ASC;
-    """, conn)
-    conn.close()
-    return df
+        ORDER BY age DESC
+        LIMIT 4
+    )
+    ORDER BY breed ASC;
+""", conn2)
+
+conn2.close()
 
 
-def step7_hungry_age_range():
-    conn = sqlite3.connect("dogs.db")
-    df = pd.read_sql("""
-        SELECT name, age, hungry
-        FROM dogs
-        WHERE hungry = 1
-          AND age BETWEEN 2 AND 7
-        ORDER BY name ASC;
-    """, conn)
-    conn.close()
-    return df
+# =========================
+# BABE RUTH DB
+# =========================
+
+conn3 = sqlite3.connect("babe_ruth.db")
 
 
-def step8_oldest_4():
-    conn = sqlite3.connect("dogs.db")
-    df = pd.read_sql("""
-        SELECT name, age, breed
-        FROM (
-            SELECT name, age, breed
-            FROM dogs
-            ORDER BY age DESC
-            LIMIT 4
-        )
-        ORDER BY breed ASC;
-    """, conn)
-    conn.close()
-    return df
+df_ruth_years = pd.read_sql("""
+    SELECT COUNT(year) AS total_years
+    FROM babe_ruth_stats;
+""", conn3)
 
 
-# PART 4: BABE RUTH DATABASE
-
-def step9_total_years():
-    conn = sqlite3.connect("babe_ruth.db")
-    df = pd.read_sql("""
-        SELECT COUNT(year) AS total_years
-        FROM babe_ruth_stats;
-    """, conn)
-    conn.close()
-    return df
+df_hr_total = pd.read_sql("""
+    SELECT SUM(HR) AS total_home_runs
+    FROM babe_ruth_stats;
+""", conn3)
 
 
-def step10_total_home_runs():
-    conn = sqlite3.connect("babe_ruth.db")
-    df = pd.read_sql("""
-        SELECT SUM(HR) AS total_home_runs
-        FROM babe_ruth_stats;
-    """, conn)
-    conn.close()
-    return df
+df_teams_years = pd.read_sql("""
+    SELECT team, COUNT(year) AS number_years
+    FROM babe_ruth_stats
+    GROUP BY team;
+""", conn3)
 
 
-def step11_team_years():
-    conn = sqlite3.connect("babe_ruth.db")
-    df = pd.read_sql("""
-        SELECT team, COUNT(year) AS number_years
-        FROM babe_ruth_stats
-        GROUP BY team;
-    """, conn)
-    conn.close()
-    return df
+df_at_bats = pd.read_sql("""
+    SELECT team, AVG(AB) AS average_at_bats
+    FROM babe_ruth_stats
+    GROUP BY team
+    HAVING AVG(AB) > 200;
+""", conn3)
 
-
-def step12_avg_at_bats():
-    conn = sqlite3.connect("babe_ruth.db")
-    df = pd.read_sql("""
-        SELECT team, AVG(AB) AS average_at_bats
-        FROM babe_ruth_stats
-        GROUP BY team
-        HAVING AVG(AB) > 200;
-    """, conn)
-    conn.close()
-    return df
+conn3.close()
