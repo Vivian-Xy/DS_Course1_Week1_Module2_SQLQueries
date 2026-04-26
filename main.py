@@ -10,7 +10,7 @@ conn1 = sqlite3.connect("planets.db")
 
 df_no_moons = pd.read_sql("""
 SELECT * FROM planets
-WHERE moons = 0;
+WHERE num_of_moons = 0;
 """, conn1)
 
 df_name_seven = pd.read_sql("""
@@ -28,7 +28,7 @@ WHERE mass <= 1.00;
 df_mass_moon = pd.read_sql("""
 SELECT *
 FROM planets
-WHERE moons >= 1
+WHERE num_of_moons >= 1
 AND mass < 1.00;
 """, conn1)
 
