@@ -69,7 +69,7 @@ FROM (
     FROM dogs
     ORDER BY age DESC
     LIMIT 4
-)
+) AS sub
 ORDER BY breed ASC;
 """, conn2)
 
